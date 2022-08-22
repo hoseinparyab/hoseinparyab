@@ -6,7 +6,7 @@ My name is Hossein paryab
 web Developer 
 -----------------------------
 
-🤝 I'm  Free softwere fan
+🤝 I'm  Free softwere fan 
 👨‍🎓 I'm  computer student softwere
 
 
@@ -17,7 +17,7 @@ web Developer
 JavaScript,
 jQuery,
 Php,
-Mysql,
+Mysql
 
 ### Socials
                   
