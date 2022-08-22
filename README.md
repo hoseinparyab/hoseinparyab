@@ -3,20 +3,21 @@
 My name is Hossein paryab
 ===============================
 
-web Developer
+web Developer 
 -----------------------------
 
 🤝 I'm  Free softwere fan
+👨‍🎓 I'm  computer student softwere
 
 
 ### Skills
- HTML
- Css
- Bootstrap
-JavaScript
-jQuery
-Php
-Mysql
+ HTML,
+ Css,
+ Bootstrap,
+JavaScript,
+jQuery,
+Php,
+Mysql,
 
 ### Socials
                   
