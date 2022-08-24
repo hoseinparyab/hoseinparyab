@@ -8,6 +8,7 @@ web Developer
 
 🧑‍💻 I'm  Free softwere fan <br>
 👨🏻‍🎓 I'm  computer student softwere
+### Skills
 <html lang="en">
 <head>
 </head>
@@ -16,7 +17,6 @@ web Developer
 </body>
 </html>
 
-### Skills
  HTML,
  Css,
  Bootstrap,
