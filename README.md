@@ -11,6 +11,7 @@ web Developer
 
 
 ### Skills
+<p style="font-size:20px; font-weight: bold; color:darkorange">html</p>
  HTML,
  Css,
  Bootstrap,
