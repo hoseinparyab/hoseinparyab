@@ -13,7 +13,7 @@ web Developer
 <head>
 </head>
 <body>
-    <h2 style="font-size:20px; font-weight: bold; color:darkorange">httml</h2>
+      <h2 style="font-size:20px; font-weight: bold; background-color:darkorange ;">html</h2>
 </body>
 </html>
 
