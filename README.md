@@ -31,3 +31,4 @@
 <p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=hoseinparyab&show_icons=true&locale=en&layout=compact" alt="hoseinparyab" /></p>
 <p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=hoseinparyab&show_icons=true&locale=en" alt="hoseinparyab" /></p>
 <p><img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=hoseinparyab&" alt="hoseinparyab" /></p>
+ <a href="https://jquery.com/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/jquery-colored.svg" width="36" height="36" alt="JQuery" /></a>
