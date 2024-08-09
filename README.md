@@ -19,7 +19,7 @@
 <h3 align="left">Connect with me:</h3>
 <p align="left">
 <a href="https://twitter.com/hoseinparyab1" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/twitter.svg" alt="hoseinparyab1" height="30" width="40" /></a>
-<a href="https://linkedin.com/in/hosein-paryab-347157226" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="hosein-paryab-347157226" height="30" width="40" /></a>
+<a href="https://linkedin.com/in/hoseinparyab" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="hosein-paryab-347157226" height="30" width="40" /></a>
 <a href="https://instagram.com/theparyab" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="theparyab" height="30" width="40" /></a>
 <a href="https://www.youtube.com/c/isources" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/youtube.svg" alt="isources" height="30" width="40" /></a>
 </p>
@@ -49,9 +49,6 @@
 <a href="https://laravel.com/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/laravel-plain-wordmark.svg" alt="Laravel" height="50" /></a>  
 <a href="https://wordpress.com/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/wordpress.png" alt="WordPress" height="50" /></a>  
 </div>
-
-
-<br/>  
 
     
 <p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=hoseinparyab&show_icons=true&locale=en&layout=compact" alt="hoseinparyab" /></p>
