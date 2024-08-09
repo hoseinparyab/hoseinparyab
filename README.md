@@ -26,7 +26,8 @@
 <a href="https://discord.gg/8633" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/discord.svg" alt="8633" height="30" width="40" /></a>
 </p>
 
-## My Skill Set  
+## My Skill Set 
+</br/>
 ### Frontend  
 <div align="center">  
 <a href="https://www.w3schools.com/css/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/css3-original-wordmark.svg" alt="CSS3" height="50" /></a>  
