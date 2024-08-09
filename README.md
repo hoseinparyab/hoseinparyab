@@ -55,7 +55,7 @@
         <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40" /> </a>
     <a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <a
             href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer">
-  
+          ![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)
 <p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=hoseinparyab&show_icons=true&locale=en&layout=compact" alt="hoseinparyab" /></p>
 </p>
 <p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=hoseinparyab&show_icons=true&locale=en" alt="hoseinparyab" /></p>
