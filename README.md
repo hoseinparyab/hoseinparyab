@@ -6,9 +6,9 @@
 
 - 🔭 I’m currently working on **freelancer**
 
-- 🌱 I’m currently learning **Dart and flutter**
+- 🌱 I’m currently learning **Php &Laravel**
 
-- 🤝 I’m looking for help with **Developing a free website**
+- 🤝 I’m looking for help with **Developing a free icon website**
 
 - 💬 Ask me about **html, css, JavaScript,jquery,bootstrap ...**
 
