@@ -25,7 +25,6 @@
 </p>
 <a href="https://discord.gg/8633" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/discord.svg" alt="8633" height="30" width="40" /></a>
 </p>
-
 ## My Skill Set 
 <br>
 ### Frontend  
@@ -37,9 +36,6 @@
 <a href="https://jquery.com/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/jquery.png" alt="jQuery" height="50" /></a>  
 <a href="https://www.javascript.com/" target="_blank"><img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/javascript-original.svg" alt="JavaScript" height="50" /></a>  
 </div>
-
-
-
 
 
 ### Backend  
