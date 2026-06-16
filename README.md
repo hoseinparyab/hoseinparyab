@@ -5,11 +5,6 @@
 </p>
 
 ---
-<!-- HEADER GIF -->
-<p align="center">
-  <img src="https://blog.jetbrains.com/wp-content/uploads/2021/12/php81_never_return_type.gif" width="100%" />
-</p>
-
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?color=0E6B69&center=true&vCenter=true&width=500&lines=PHP+Developer;Laravel+Backend+Developer;FastAPI+Learner;MongoDB+Enthusiast;Freelancer" />
 </p>
@@ -72,7 +67,7 @@
 
 ### Tools
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=git,github,linux,vscode,Docker" />
+  <img src="https://skillicons.dev/icons?i=git,github,linux,vscode,docker" />
 </p>
 
 ---
