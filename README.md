@@ -119,13 +119,17 @@
 <img style="margin: 10px" src="https://profilinator.rishav.dev/skills-assets/git-scm-icon.svg" height="50" />
 </a>
 
-<!-- GitHub (Dark/Light Mode Fix) -->
 <a href="https://github.com/" target="_blank">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-mark-white.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg">
-  <img alt="GitHub" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" height="50">
-</picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" 
+      srcset="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg">
+
+    <source media="(prefers-color-scheme: light)" 
+      srcset="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg">
+
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" 
+      alt="GitHub" height="50" />
+  </picture>
 </a>
 
 <a href="https://www.linux.org/" target="_blank">
@@ -155,9 +159,8 @@
 ## 🏆 GitHub Trophies
 
 <p align="center">
-<img src="https://github-profile-trophy.vercel.app/?username=hoseinparyab&theme=onedark&row=1&column=7" />
+  <img src="https://github-profile-trophy.vercel.app/?username=hoseinparyab&theme=onedark&no-frame=true&row=1&column=7" />
 </p>
-
 ---
 
 ## 📈 Contribution Graph
