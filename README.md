@@ -11,9 +11,6 @@
 
 ---
 
-
----
-
 ## 👨‍💻 About Me
 
 - 🔭 I’m currently working as a **Freelance Web Developer**
@@ -74,9 +71,6 @@
 
 ## 📊 GitHub Stats (Animated)
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=hoseinparyab&show_icons=true&theme=tokyonight&hide_border=true" />
-</p>
 
 <p align="center">
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=hoseinparyab&theme=tokyonight&hide_border=true" />
@@ -107,8 +101,3 @@
 
 ---
 
-## 👀 Visitor Counter
-
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=hoseinparyab&label=Profile%20Views&color=0e75b6&style=flat" />
-</p>
