@@ -67,6 +67,15 @@
 </p>
 
 ---
+## 🧠 Currently Learning
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
+</p>
+
+---
 
 ## 📊 GitHub Stats (Animated)
 
@@ -81,7 +90,6 @@
 
 ---
 
-
 ## 📈 Contribution Graph (Animated)
 
 <p align="center">
@@ -90,13 +98,6 @@
 
 ---
 
-## 🧠 Currently Learning
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" />
-  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
-  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
-</p>
 
----
 
