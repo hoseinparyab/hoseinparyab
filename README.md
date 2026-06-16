@@ -4,7 +4,6 @@
   <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=28&pause=1000&color=0E6B69&center=true&vCenter=true&width=800&lines=Hosein+Paryab;Backend+Engineer+%7C+Laravel+%7C+FastAPI+%7C+MongoDB;Building+Scalable+APIs+%26+Systems;Freelancer+%7C+Clean+Architecture+Developer" />
 </p>
 
----
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?color=0E6B69&center=true&vCenter=true&width=500&lines=PHP+Developer;Laravel+Backend+Developer;FastAPI+Learner;MongoDB+Enthusiast;Freelancer" />
 </p>
