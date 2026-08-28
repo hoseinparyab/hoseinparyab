@@ -1,11 +1,11 @@
 
 <!-- HERO ANIMATION -->
 <p align="center">
-  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22Hosein%20Paryab%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Backend%20Engineer%20%7C%20Laravel%20%7C%20FastAPI%20%7C%20MongoDB%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Building%20Scalable%20APIs%20%26%20Systems%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%20%7C%20Clean%20Architecture%20Developer%22%2C%22color%22%3A%22%230E6B69%22%7D%5D&width=800&typingSpeed=0.06&deleteSpeed=0.06&pause=500&fontSize=28&font=Fira+Code&backgroundOpacity=0&border=false&center=true&vCenter=true" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=28&duration=2000&pause=500&color=0E6B69&center=true&vCenter=true&width=800&lines=Hosein+Paryab;Backend+Engineer+%7C+Laravel+%7C+FastAPI+%7C+MongoDB;Building+Scalable+APIs+%26+Systems;Freelancer+%7C+Clean+Architecture+Developer" />
 </p>
 
 <p align="center">
-  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22PHP%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22Laravel%20Backend%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22FastAPI%20Learner%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22MongoDB%20Enthusiast%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%22%2C%22color%22%3A%22%230E6B69%22%7D%5D&width=500&typingSpeed=0.06&deleteSpeed=0.06&pause=500&fontSize=28&font=Fira+Code&backgroundOpacity=0&border=false&center=true&vCenter=true" />
+  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22PHP%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22Laravel%20Backend%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22FastAPI%20Learner%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22MongoDB%20Enthusiast%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%22%2C%22color%22%3A%22%230E6B69%22%7D%5D&width=500&typingSpeed=0.07&deleteSpeed=0.07&pause=500&fontSize=28&backgroundOpacity=0&border=false&center=true&vCenter=true" />
 </p>
 
 ---
