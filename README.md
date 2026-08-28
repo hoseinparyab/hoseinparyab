@@ -1,11 +1,11 @@
 
 <!-- HERO ANIMATION -->
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=28&pause=1000&color=0E6B69&center=true&vCenter=true&width=800&lines=Hosein+Paryab;Backend+Engineer+%7C+Laravel+%7C+FastAPI+%7C+MongoDB;Building+Scalable+APIs+%26+Systems;Freelancer+%7C+Clean+Architecture+Developer" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=28&duration=2000&pause=500&color=0E6B69&center=true&vCenter=true&width=800&lines=Hosein+Paryab;Backend+Engineer+%7C+Laravel+%7C+FastAPI+%7C+MongoDB;Building+Scalable+APIs+%26+Systems;Freelancer+%7C+Clean+Architecture+Developer" />
 </p>
 
 <p align="center">
-  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22PHP%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22Laravel%20Backend%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22FastAPI%20Learner%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22MongoDB%20Enthusiast%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%22%2C%22color%22%3A%22%230E6B69%22%7D%5D&center=true&vCenter=true&width=500&pause=1000&fontSize=28&font=Fira+Code&backgroundOpacity=0&border=false" />
+  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22PHP%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22Laravel%20Backend%20Developer%22%2C%22color%22%3A%22%23FF2D20%22%7D%2C%7B%22text%22%3A%22FastAPI%20Learner%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22MongoDB%20Enthusiast%22%2C%22color%22%3A%22%230E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%22%2C%22color%22%3A%22%230E6B69%22%7D%5D&center=true&vCenter=true&width=500&pause=500&fontSize=28&font=Fira+Code&typingSpeed=0.08&deleteSpeed=0.08&backgroundOpacity=0&border=false" />
 </p>
 
 ---
@@ -14,7 +14,7 @@
 
 - 🔭 I’m currently working as a **Freelance Web Developer**
 - 🌱 I’m learning **Laravel, FastAPI, MongoDB & System Design**
-- 🤝 I’m looking to build a **Free Icon Website**
+- 🤝 Founder of **Najino**
 - 💬 Ask me about **PHP, Laravel, FastAPI, MySQL, MongoDB**
 - 📫 Email: **hoseinparyab1@gmail.com**
 - ⚡ Fun fact: I love building clean backend systems 🚀
