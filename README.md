@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22PHP%20Developer%22%2C%22color%22%3A%220E6B69%22%7D%2C%7B%22text%22%3A%22Laravel%20Backend%20Developer%22%2C%22color%22%3A%22FF2D20%22%7D%2C%7B%22text%22%3A%22FastAPI%20Learner%22%2C%22color%22%3A%220E6B69%22%7D%2C%7B%22text%22%3A%22MongoDB%20Enthusiast%22%2C%22color%22%3A%220E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%22%2C%22color%22%3A%220E6B69%22%7D%5D&center=true&vCenter=true&width=500&pause=1000&fontSize=28&font=Fira+Code" />
+  <img src="https://typingsvg.vercel.app/api/svg?lines=%5B%7B%22text%22%3A%22PHP%20Developer%22%2C%22color%22%3A%22FF2D20%22%7D%2C%7B%22text%22%3A%22Laravel%20Backend%20Developer%22%2C%22color%22%3A%22FF2D20%22%7D%2C%7B%22text%22%3A%22FastAPI%20Learner%22%2C%22color%22%3A%220E6B69%22%7D%2C%7B%22text%22%3A%22MongoDB%20Enthusiast%22%2C%22color%22%3A%220E6B69%22%7D%2C%7B%22text%22%3A%22Freelancer%22%2C%22color%22%3A%220E6B69%22%7D%5D&center=true&vCenter=true&width=500&pause=1000&fontSize=28&font=Fira+Code&backgroundOpacity=0&border=false" />
 </p>
 
 ---
@@ -93,7 +93,7 @@
 ## 📈 Contribution Graph (Animated)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/hoseinparyab/hoseinparyab/output/activity-graph.svg" />
+  <img src="https://github-readme-activity-graphkayan.vercel.app/graph?username=hoseinparyab&theme=react-dark&hide_border=true" />
 </p>
 
 ---
