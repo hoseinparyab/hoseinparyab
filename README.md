@@ -84,18 +84,35 @@
   <tr>
     <td align="center">
       <b>🔢 Total Commits</b><br/>
-      <b>1,522</b><br/>
+      <b>1,524</b><br/>
       <sub>Dec 14, 2020 - Present · Public + Private</sub>
     </td>
     <td align="center">
-      <b>📅 Best Month</b><br/>
+      <b>📅 This Month</b><br/>
       <b>354</b><br/>
-      <sub>Aug 2026 · Last 6 months</sub>
+      <sub>Aug 2026 · Updates daily</sub>
     </td>
     <td align="center">
-      <b>🔥 Best Week</b><br/>
+      <b>🔥 This Week</b><br/>
+      <b>80</b><br/>
+      <sub>Aug 24 - Aug 29, 2026 · Updates daily</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>🏆 Best Month</b><br/>
+      <b>354</b><br/>
+      <sub>Aug 2026 · Best in last 6 months</sub>
+    </td>
+    <td align="center">
+      <b>⭐ Best Week</b><br/>
       <b>127</b><br/>
-      <sub>Jul 27 - Aug 02, 2026 · Last 6 months</sub>
+      <sub>Jul 27 - Aug 02, 2026 · Best in last 6 months</sub>
+    </td>
+    <td align="center">
+      <b>🔄 Refresh</b><br/>
+      <b>Daily</b><br/>
+      <sub>GitHub Actions · Public + Private</sub>
     </td>
   </tr>
 </table>
