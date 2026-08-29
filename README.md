@@ -80,24 +80,16 @@
 ## 📊 GitHub Stats (Animated)
 
 <!--START_SECTION:commit_stats-->
-<p align="center">
-  <img src="https://github-readme-stats.shion.dev/api?username=hoseinparyab&include_all_commits=true&show_icons=true&theme=tokyonight&hide_border=true&hide=stars,prs,issues,contribs&custom_title=Commit%20Overview" alt="Commit Overview" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=hoseinparyab&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
-</p>
-
 <table align="center">
   <tr>
     <td align="center">
       <b>🔢 Total Commits</b><br/>
-      <b>1,520</b><br/>
+      <b>1,522</b><br/>
       <sub>Dec 14, 2020 - Present · Public + Private</sub>
     </td>
     <td align="center">
       <b>📅 Best Month</b><br/>
-      <b>353</b><br/>
+      <b>354</b><br/>
       <sub>Aug 2026 · Last 6 months</sub>
     </td>
     <td align="center">
