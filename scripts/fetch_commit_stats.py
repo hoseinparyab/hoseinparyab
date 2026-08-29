@@ -7,7 +7,6 @@ import json
 import os
 import re
 import sys
-import urllib.error
 import urllib.request
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -21,7 +20,7 @@ END_MARKER = "<!--END_SECTION:commit_stats-->"
 MONTHS_LOOKBACK = int(os.environ.get("MONTHS_LOOKBACK", "6"))
 
 
-def api_request(url: str, data: dict[str, Any] | None = None, extra_headers: dict[str, str] | None = None) -> Any:
+def api_request(url: str, data: dict[str, Any] | None = None) -> Any:
     headers = {
         "Accept": "application/vnd.github+json",
         "User-Agent": "hoseinparyab-commit-stats",
@@ -29,8 +28,6 @@ def api_request(url: str, data: dict[str, Any] | None = None, extra_headers: dic
     }
     if TOKEN:
         headers["Authorization"] = f"Bearer {TOKEN}"
-    if extra_headers:
-        headers.update(extra_headers)
 
     body = None
     if data is not None:
@@ -47,11 +44,12 @@ def fetch_user_created_at() -> datetime:
     return datetime.fromisoformat(payload["created_at"].replace("Z", "+00:00"))
 
 
-def fetch_contribution_calendar(from_date: datetime, to_date: datetime) -> dict[str, Any]:
+def fetch_stats(from_date: datetime, to_date: datetime) -> dict[str, Any]:
     query = """
     query($login: String!, $from: DateTime!, $to: DateTime!) {
       user(login: $login) {
         contributionsCollection(from: $from, to: $to) {
+          totalCommitContributions
           contributionCalendar {
             totalContributions
             weeks {
@@ -73,19 +71,12 @@ def fetch_contribution_calendar(from_date: datetime, to_date: datetime) -> dict[
     result = api_request("https://api.github.com/graphql", {"query": query, "variables": variables})
     if "errors" in result:
         raise RuntimeError(json.dumps(result["errors"], indent=2))
-    return result["data"]["user"]["contributionsCollection"]["contributionCalendar"]
 
+    user = result.get("data", {}).get("user")
+    if not user:
+        raise RuntimeError("GitHub user not found")
 
-def fetch_total_commits(created_at: datetime) -> int:
-    """Count commits via Search API (1 request when token is available)."""
-    if not TOKEN:
-        raise RuntimeError("GITHUB_TOKEN is required to count total commits")
-
-    since = created_at.strftime("%Y-%m-%d")
-    query = f"author:{USERNAME} committer-date:>={since}"
-    url = f"https://api.github.com/search/commits?q={urllib.request.quote(query)}&per_page=1"
-    result = api_request(url, extra_headers={"Accept": "application/vnd.github+json"})
-    return int(result.get("total_count", 0))
+    return user["contributionsCollection"]
 
 
 def parse_days(calendar: dict[str, Any]) -> list[tuple[datetime, int]]:
@@ -220,10 +211,11 @@ def main() -> None:
     created_at = fetch_user_created_at()
     now = datetime.now(timezone.utc)
 
-    calendar = fetch_contribution_calendar(created_at, now)
+    stats = fetch_stats(created_at, now)
+    calendar = stats["contributionCalendar"]
     days = parse_days(calendar)
     best_month, best_week = compute_peaks(days, MONTHS_LOOKBACK)
-    total_commits = fetch_total_commits(created_at)
+    total_commits = int(stats.get("totalCommitContributions", 0))
 
     update_readme(build_section(total_commits, best_month, best_week, created_at))
 

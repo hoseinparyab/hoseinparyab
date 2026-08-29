@@ -28,7 +28,7 @@ jobs:
       - name: Fetch and update commit stats
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_USERNAME: hoseinparyab
+          GITHUB_USERNAME: ${{ github.repository_owner }}
         run: python scripts/fetch_commit_stats.py
 
       - name: Commit changes
