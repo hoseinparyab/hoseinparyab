@@ -7,6 +7,8 @@ import json
 import os
 import re
 import sys
+import urllib.error
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -20,11 +22,16 @@ END_MARKER = "<!--END_SECTION:commit_stats-->"
 MONTHS_LOOKBACK = int(os.environ.get("MONTHS_LOOKBACK", "6"))
 
 
-def http_get(url: str) -> str:
-    request = urllib.request.Request(
-        url,
-        headers={"User-Agent": "hoseinparyab-commit-stats"},
-    )
+def http_get(url: str, auth: bool = False) -> str:
+    headers = {
+        "User-Agent": "hoseinparyab-commit-stats",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    if auth and TOKEN:
+        headers["Authorization"] = f"Bearer {TOKEN}"
+
+    request = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(request, timeout=90) as response:
         return response.read().decode("utf-8")
 
@@ -64,6 +71,15 @@ def fetch_public_total_commits() -> int:
     return int(match.group(1).replace(",", ""))
 
 
+def fetch_authenticated_total_commits(since: datetime) -> int:
+    since_label = since.strftime("%Y-%m-%d")
+    query = urllib.parse.quote(f"author:{USERNAME} committer-date:>={since_label}")
+    payload = json.loads(
+        http_get(f"https://api.github.com/search/commits?q={query}&per_page=1", auth=True)
+    )
+    return int(payload.get("total_count", 0))
+
+
 def fetch_public_contribution_days(start_year: int, end_year: int) -> list[tuple[datetime, int]]:
     days: list[tuple[datetime, int]] = []
     for year in range(start_year, end_year + 1):
@@ -76,45 +92,49 @@ def fetch_public_contribution_days(start_year: int, end_year: int) -> list[tuple
     return days
 
 
-def fetch_private_stats(from_date: datetime, to_date: datetime) -> dict[str, Any]:
-    data = graphql_request(
-        """
-        query($login: String!, $from: DateTime!, $to: DateTime!) {
-          viewer { login }
-          user(login: $login) {
-            contributionsCollection(from: $from, to: $to) {
-              totalCommitContributions
-              contributionCalendar {
-                totalContributions
-                weeks {
-                  contributionDays {
-                    date
-                    contributionCount
+def fetch_private_contribution_days(from_date: datetime, to_date: datetime) -> list[tuple[datetime, int]]:
+    """Fetch contribution calendar year-by-year via authenticated viewer query."""
+    days: list[tuple[datetime, int]] = []
+    for year in range(from_date.year, to_date.year + 1):
+        year_start = datetime(year, 1, 1, tzinfo=timezone.utc)
+        year_end = datetime(year, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+        start = max(from_date, year_start)
+        end = min(to_date, year_end)
+
+        data = graphql_request(
+            """
+            query($from: DateTime!, $to: DateTime!) {
+              viewer {
+                login
+                contributionsCollection(from: $from, to: $to) {
+                  contributionCalendar {
+                    weeks {
+                      contributionDays {
+                        date
+                        contributionCount
+                      }
+                    }
                   }
                 }
               }
             }
-          }
-        }
-        """,
-        {
-            "login": USERNAME,
-            "from": from_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "to": to_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        },
-    )
-
-    viewer_login = data.get("viewer", {}).get("login")
-    if viewer_login != USERNAME:
-        raise RuntimeError(
-            f"GH_PAT must belong to '{USERNAME}', but token user is '{viewer_login}'."
+            """,
+            {
+                "from": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "to": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
         )
 
-    user = data.get("user")
-    if not user:
-        raise RuntimeError("GitHub user not found")
+        viewer = data.get("viewer") or {}
+        if viewer.get("login") != USERNAME:
+            raise RuntimeError(
+                f"GH_PAT must belong to '{USERNAME}', but token user is '{viewer.get('login')}'."
+            )
 
-    return user["contributionsCollection"]
+        calendar = viewer["contributionsCollection"]["contributionCalendar"]
+        days.extend(parse_calendar_days(calendar))
+
+    return days
 
 
 def parse_calendar_days(calendar: dict[str, Any]) -> list[tuple[datetime, int]]:
@@ -234,20 +254,19 @@ def update_readme(section: str) -> None:
 def main() -> None:
     created_at = fetch_user_created_at()
     now = datetime.now(timezone.utc)
+    scope_label = "Public only"
+    total_commits = fetch_public_total_commits()
+    lookback_start_year = max(created_at.year, now.year - 1)
+    days = fetch_public_contribution_days(lookback_start_year, now.year)
 
     if TOKEN:
-        print("Using GH_PAT: counting public + private stats")
-        stats = fetch_private_stats(created_at, now)
-        calendar = stats["contributionCalendar"]
-        days = parse_calendar_days(calendar)
-        total_commits = int(stats.get("totalCommitContributions", 0))
-        scope_label = "Public + Private"
-    else:
-        print("GH_PAT not set: counting public stats only")
-        lookback_start_year = max(created_at.year, now.year - 1)
-        days = fetch_public_contribution_days(lookback_start_year, now.year)
-        total_commits = fetch_public_total_commits()
-        scope_label = "Public only"
+        try:
+            print("Using GH_PAT: fetching public + private stats")
+            total_commits = fetch_authenticated_total_commits(created_at)
+            days = fetch_private_contribution_days(created_at, now)
+            scope_label = "Public + Private"
+        except (urllib.error.HTTPError, RuntimeError, json.JSONDecodeError) as exc:
+            print(f"Warning: GH_PAT request failed, falling back to public stats. Reason: {exc}")
 
     best_month, best_week = compute_peaks(days, MONTHS_LOOKBACK)
     update_readme(build_section(total_commits, best_month, best_week, created_at, scope_label))
