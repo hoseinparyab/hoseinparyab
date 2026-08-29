@@ -79,10 +79,37 @@
 
 ## 📊 GitHub Stats (Animated)
 
+<!--START_SECTION:commit_stats-->
+<p align="center">
+  <img src="https://github-readme-stats.shion.dev/api?username=hoseinparyab&include_all_commits=true&show_icons=true&theme=tokyonight&hide_border=true&hide=stars,prs,issues,contribs&custom_title=Commit%20Overview" alt="Commit Overview" />
+</p>
 
 <p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=hoseinparyab&theme=tokyonight&hide_border=true" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=hoseinparyab&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
 </p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <b>🔢 Total Commits</b><br/>
+      <b>—</b><br/>
+      <sub>Dec 14, 2020 - Present</sub>
+    </td>
+    <td align="center">
+      <b>📅 Best Month</b><br/>
+      <b>—</b><br/>
+      <sub>Last 6 months</sub>
+    </td>
+    <td align="center">
+      <b>🔥 Best Week</b><br/>
+      <b>—</b><br/>
+      <sub>All time</sub>
+    </td>
+  </tr>
+</table>
+
+<p align="center"><sub>Auto-updated daily by GitHub Actions</sub></p>
+<!--END_SECTION:commit_stats-->
 
 <p align="center">
   <img src="https://github-readme-stats.shion.dev/api/top-langs/?username=hoseinparyab&layout=compact&theme=tokyonight&hide_border=true" />
