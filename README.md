@@ -92,12 +92,12 @@
   <tr>
     <td align="center">
       <b>🔢 Total Commits</b><br/>
-      <b>747</b><br/>
-      <sub>Dec 14, 2020 - Present · Public only</sub>
+      <b>1,520</b><br/>
+      <sub>Dec 14, 2020 - Present · Public + Private</sub>
     </td>
     <td align="center">
       <b>📅 Best Month</b><br/>
-      <b>354</b><br/>
+      <b>353</b><br/>
       <sub>Aug 2026 · Last 6 months</sub>
     </td>
     <td align="center">
