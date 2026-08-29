@@ -92,18 +92,18 @@
   <tr>
     <td align="center">
       <b>🔢 Total Commits</b><br/>
-      <b>—</b><br/>
+      <b>747</b><br/>
       <sub>Dec 14, 2020 - Present</sub>
     </td>
     <td align="center">
       <b>📅 Best Month</b><br/>
-      <b>—</b><br/>
-      <sub>Last 6 months</sub>
+      <b>354</b><br/>
+      <sub>Aug 2026 · Last 6 months</sub>
     </td>
     <td align="center">
       <b>🔥 Best Week</b><br/>
-      <b>—</b><br/>
-      <sub>All time</sub>
+      <b>127</b><br/>
+      <sub>Jul 27 - Aug 02, 2026 · Last 6 months</sub>
     </td>
   </tr>
 </table>
