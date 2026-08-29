@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch GitHub commit stats and update README section (no token required)."""
+"""Fetch GitHub commit stats (public + private) and update README section."""
 
 from __future__ import annotations
 
@@ -13,19 +13,45 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 USERNAME = os.environ.get("GITHUB_USERNAME", "hoseinparyab")
+TOKEN = os.environ.get("GH_PAT") or os.environ.get("GITHUB_TOKEN", "")
 README_PATH = os.environ.get("README_PATH", "README.md")
 START_MARKER = "<!--START_SECTION:commit_stats-->"
 END_MARKER = "<!--END_SECTION:commit_stats-->"
 MONTHS_LOOKBACK = int(os.environ.get("MONTHS_LOOKBACK", "6"))
 
 
-def http_get(url: str) -> str:
-    request = urllib.request.Request(
-        url,
-        headers={"User-Agent": "hoseinparyab-commit-stats"},
-    )
+def http_get(url: str, auth: bool = False) -> str:
+    headers = {
+        "User-Agent": "hoseinparyab-commit-stats",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    if auth and TOKEN:
+        headers["Authorization"] = f"Bearer {TOKEN}"
+
+    request = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(request, timeout=90) as response:
         return response.read().decode("utf-8")
+
+
+def api_request(url: str, data: dict[str, Any] | None = None) -> Any:
+    headers = {
+        "User-Agent": "hoseinparyab-commit-stats",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    if not TOKEN:
+        raise RuntimeError("GH_PAT secret is required to include private repo stats")
+
+    headers["Authorization"] = f"Bearer {TOKEN}"
+    body = None
+    if data is not None:
+        body = json.dumps(data).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+
+    request = urllib.request.Request(url, data=body, headers=headers, method="POST" if data else "GET")
+    with urllib.request.urlopen(request, timeout=90) as response:
+        return json.loads(response.read().decode("utf-8"))
 
 
 def fetch_user_created_at() -> datetime:
@@ -33,27 +59,59 @@ def fetch_user_created_at() -> datetime:
     return datetime.fromisoformat(payload["created_at"].replace("Z", "+00:00"))
 
 
-def fetch_total_commits() -> int:
-    svg = http_get(
-        f"https://github-readme-stats.shion.dev/api?username={USERNAME}"
-        "&include_all_commits=true&hide=stars,prs,issues,contribs"
-    )
-    match = re.search(r"Total Commits\s*:\s*([\d,]+)", svg)
-    if not match:
-        raise RuntimeError("Could not parse total commits from stats API")
-    return int(match.group(1).replace(",", ""))
+def fetch_authenticated_stats(from_date: datetime, to_date: datetime) -> dict[str, Any]:
+    query = """
+    query($login: String!, $from: DateTime!, $to: DateTime!) {
+      viewer {
+        login
+      }
+      user(login: $login) {
+        contributionsCollection(from: $from, to: $to) {
+          totalCommitContributions
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    variables = {
+        "login": USERNAME,
+        "from": from_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "to": to_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+    result = api_request("https://api.github.com/graphql", {"query": query, "variables": variables})
+    if "errors" in result:
+        raise RuntimeError(json.dumps(result["errors"], indent=2))
 
-
-def fetch_contribution_days(start_year: int, end_year: int) -> list[tuple[datetime, int]]:
-    days: list[tuple[datetime, int]] = []
-    for year in range(start_year, end_year + 1):
-        payload = json.loads(
-            http_get(f"https://github-contributions-api.jogruber.de/v4/{USERNAME}?y={year}")
+    viewer_login = result.get("data", {}).get("viewer", {}).get("login")
+    if viewer_login != USERNAME:
+        raise RuntimeError(
+            "GH_PAT must belong to the profile owner. "
+            f"Token user is '{viewer_login}', expected '{USERNAME}'."
         )
-        for item in payload.get("contributions", []):
-            date = datetime.strptime(item["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
-            days.append((date, int(item["count"])))
+
+    user = result.get("data", {}).get("user")
+    if not user:
+        raise RuntimeError("GitHub user not found")
+
+    return user["contributionsCollection"]
+
+
+def parse_calendar_days(calendar: dict[str, Any]) -> list[tuple[datetime, int]]:
+    days: list[tuple[datetime, int]] = []
+    for week in calendar.get("weeks", []):
+        for day in week.get("contributionDays", []):
+            date = datetime.strptime(day["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            days.append((date, int(day["contributionCount"])))
     return days
+
 
 def month_key(date: datetime) -> str:
     return date.strftime("%Y-%m")
@@ -128,7 +186,7 @@ def build_section(
     <td align="center">
       <b>🔢 Total Commits</b><br/>
       <b>{total_commits:,}</b><br/>
-      <sub>{since_label} - Present</sub>
+      <sub>{since_label} - Present · Public + Private</sub>
     </td>
     <td align="center">
       <b>📅 Best Month</b><br/>
@@ -160,12 +218,20 @@ def update_readme(section: str) -> None:
 
 
 def main() -> None:
+    if not TOKEN:
+        raise RuntimeError(
+            "Missing GH_PAT secret. Create a Personal Access Token with 'repo' scope "
+            "and add it as repository secret named GH_PAT."
+        )
+
     created_at = fetch_user_created_at()
     now = datetime.now(timezone.utc)
-    lookback_start_year = max(created_at.year, now.year - 1)
-    days = fetch_contribution_days(lookback_start_year, now.year)
+    stats = fetch_authenticated_stats(created_at, now)
+
+    calendar = stats["contributionCalendar"]
+    days = parse_calendar_days(calendar)
     best_month, best_week = compute_peaks(days, MONTHS_LOOKBACK)
-    total_commits = fetch_total_commits()
+    total_commits = int(stats.get("totalCommitContributions", 0))
 
     update_readme(build_section(total_commits, best_month, best_week, created_at))
 
@@ -173,6 +239,7 @@ def main() -> None:
         json.dumps(
             {
                 "total_commits": total_commits,
+                "total_contributions": calendar.get("totalContributions", 0),
                 "best_month": {"label": best_month[0], "count": best_month[1]},
                 "best_week": {"label": best_week[0], "count": best_week[1]},
             },
