@@ -162,6 +162,26 @@ def format_week(start: datetime, end: datetime) -> str:
     return f"{start.strftime('%b %d, %Y')} - {end.strftime('%b %d, %Y')}"
 
 
+def compute_current_period(days: list[tuple[datetime, int]]) -> tuple[tuple[str, int, str], tuple[str, int, str]]:
+    now = datetime.now(timezone.utc)
+    current_month = month_key(now)
+    month_count = sum(count for date, count in days if month_key(date) == current_month)
+    this_month = (format_month(current_month), month_count, "Updates daily")
+
+    iso = now.isocalendar()
+    week_key = f"{iso.year}-W{iso.week:02d}"
+    week_days = [(date, count) for date, count in days if f"{date.isocalendar().year}-W{date.isocalendar().week:02d}" == week_key]
+    if not week_days:
+        raise RuntimeError("No contribution data found for the current week")
+
+    week_count = sum(count for _, count in week_days)
+    week_start = min(date for date, _ in week_days)
+    week_end = max(date for date, _ in week_days)
+    this_week = (format_week(week_start, week_end), week_count, "Updates daily")
+
+    return this_month, this_week
+
+
 def compute_peaks(days: list[tuple[datetime, int]], months_back: int) -> tuple[tuple[str, int, str], tuple[str, int, str]]:
     now = datetime.now(timezone.utc)
     month_cutoff = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -186,13 +206,13 @@ def compute_peaks(days: list[tuple[datetime, int]], months_back: int) -> tuple[t
         raise RuntimeError("No contribution data found in lookback window")
 
     best_month_key = max(monthly, key=monthly.get)
-    best_month = (format_month(best_month_key), monthly[best_month_key], f"Last {months_back} months")
+    best_month = (format_month(best_month_key), monthly[best_month_key], f"Best in last {months_back} months")
 
     best_week_key = max(weekly, key=weekly.get)
     best_week = (
         format_week(week_start[best_week_key], week_end[best_week_key]),
         weekly[best_week_key],
-        f"Last {months_back} months",
+        f"Best in last {months_back} months",
     )
 
     return best_month, best_week
@@ -200,6 +220,8 @@ def compute_peaks(days: list[tuple[datetime, int]], months_back: int) -> tuple[t
 
 def build_section(
     total_commits: int,
+    this_month: tuple[str, int, str],
+    this_week: tuple[str, int, str],
     best_month: tuple[str, int, str],
     best_week: tuple[str, int, str],
     since: datetime,
@@ -215,14 +237,31 @@ def build_section(
       <sub>{since_label} - Present · {scope_label}</sub>
     </td>
     <td align="center">
-      <b>📅 Best Month</b><br/>
+      <b>📅 This Month</b><br/>
+      <b>{this_month[1]:,}</b><br/>
+      <sub>{this_month[0]} · {this_month[2]}</sub>
+    </td>
+    <td align="center">
+      <b>🔥 This Week</b><br/>
+      <b>{this_week[1]:,}</b><br/>
+      <sub>{this_week[0]} · {this_week[2]}</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>🏆 Best Month</b><br/>
       <b>{best_month[1]:,}</b><br/>
       <sub>{best_month[0]} · {best_month[2]}</sub>
     </td>
     <td align="center">
-      <b>🔥 Best Week</b><br/>
+      <b>⭐ Best Week</b><br/>
       <b>{best_week[1]:,}</b><br/>
       <sub>{best_week[0]} · {best_week[2]}</sub>
+    </td>
+    <td align="center">
+      <b>🔄 Refresh</b><br/>
+      <b>Daily</b><br/>
+      <sub>GitHub Actions · {scope_label}</sub>
     </td>
   </tr>
 </table>
@@ -260,14 +299,21 @@ def main() -> None:
         except (urllib.error.HTTPError, RuntimeError, json.JSONDecodeError) as exc:
             print(f"Warning: GH_PAT request failed, falling back to public stats. Reason: {exc}")
 
+    this_month, this_week = compute_current_period(days)
     best_month, best_week = compute_peaks(days, MONTHS_LOOKBACK)
-    update_readme(build_section(total_commits, best_month, best_week, created_at, scope_label))
+    update_readme(
+        build_section(
+            total_commits, this_month, this_week, best_month, best_week, created_at, scope_label
+        )
+    )
 
     print(
         json.dumps(
             {
                 "scope": scope_label,
                 "total_commits": total_commits,
+                "this_month": {"label": this_month[0], "count": this_month[1]},
+                "this_week": {"label": this_week[0], "count": this_week[1]},
                 "best_month": {"label": best_month[0], "count": best_month[1]},
                 "best_week": {"label": best_week[0], "count": best_week[1]},
             },
