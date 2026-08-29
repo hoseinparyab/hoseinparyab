@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch GitHub commit stats and update README section."""
+"""Fetch GitHub commit stats and update README section (no token required)."""
 
 from __future__ import annotations
 
@@ -13,80 +13,47 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 USERNAME = os.environ.get("GITHUB_USERNAME", "hoseinparyab")
-TOKEN = os.environ.get("GITHUB_TOKEN", "")
 README_PATH = os.environ.get("README_PATH", "README.md")
 START_MARKER = "<!--START_SECTION:commit_stats-->"
 END_MARKER = "<!--END_SECTION:commit_stats-->"
 MONTHS_LOOKBACK = int(os.environ.get("MONTHS_LOOKBACK", "6"))
 
 
-def api_request(url: str, data: dict[str, Any] | None = None) -> Any:
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "User-Agent": "hoseinparyab-commit-stats",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
-    if TOKEN:
-        headers["Authorization"] = f"Bearer {TOKEN}"
-
-    body = None
-    if data is not None:
-        body = json.dumps(data).encode("utf-8")
-        headers["Content-Type"] = "application/json"
-
-    request = urllib.request.Request(url, data=body, headers=headers, method="POST" if data else "GET")
+def http_get(url: str) -> str:
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "hoseinparyab-commit-stats"},
+    )
     with urllib.request.urlopen(request, timeout=90) as response:
-        return json.loads(response.read().decode("utf-8"))
+        return response.read().decode("utf-8")
 
 
 def fetch_user_created_at() -> datetime:
-    payload = api_request(f"https://api.github.com/users/{USERNAME}")
+    payload = json.loads(http_get(f"https://api.github.com/users/{USERNAME}"))
     return datetime.fromisoformat(payload["created_at"].replace("Z", "+00:00"))
 
 
-def fetch_stats(from_date: datetime, to_date: datetime) -> dict[str, Any]:
-    query = """
-    query($login: String!, $from: DateTime!, $to: DateTime!) {
-      user(login: $login) {
-        contributionsCollection(from: $from, to: $to) {
-          totalCommitContributions
-          contributionCalendar {
-            totalContributions
-            weeks {
-              contributionDays {
-                date
-                contributionCount
-              }
-            }
-          }
-        }
-      }
-    }
-    """
-    variables = {
-        "login": USERNAME,
-        "from": from_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "to": to_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
-    }
-    result = api_request("https://api.github.com/graphql", {"query": query, "variables": variables})
-    if "errors" in result:
-        raise RuntimeError(json.dumps(result["errors"], indent=2))
-
-    user = result.get("data", {}).get("user")
-    if not user:
-        raise RuntimeError("GitHub user not found")
-
-    return user["contributionsCollection"]
+def fetch_total_commits() -> int:
+    svg = http_get(
+        f"https://github-readme-stats.shion.dev/api?username={USERNAME}"
+        "&include_all_commits=true&hide=stars,prs,issues,contribs"
+    )
+    match = re.search(r"Total Commits\s*:\s*([\d,]+)", svg)
+    if not match:
+        raise RuntimeError("Could not parse total commits from stats API")
+    return int(match.group(1).replace(",", ""))
 
 
-def parse_days(calendar: dict[str, Any]) -> list[tuple[datetime, int]]:
+def fetch_contribution_days(start_year: int, end_year: int) -> list[tuple[datetime, int]]:
     days: list[tuple[datetime, int]] = []
-    for week in calendar.get("weeks", []):
-        for day in week.get("contributionDays", []):
-            date = datetime.strptime(day["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
-            days.append((date, int(day["contributionCount"])))
+    for year in range(start_year, end_year + 1):
+        payload = json.loads(
+            http_get(f"https://github-contributions-api.jogruber.de/v4/{USERNAME}?y={year}")
+        )
+        for item in payload.get("contributions", []):
+            date = datetime.strptime(item["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            days.append((date, int(item["count"])))
     return days
-
 
 def month_key(date: datetime) -> str:
     return date.strftime("%Y-%m")
@@ -105,51 +72,36 @@ def format_week(start: datetime, end: datetime) -> str:
 
 
 def compute_peaks(days: list[tuple[datetime, int]], months_back: int) -> tuple[tuple[str, int, str], tuple[str, int, str]]:
-    monthly: dict[str, int] = defaultdict(int)
-    for date, count in days:
-        monthly[month_key(date)] += count
-
     now = datetime.now(timezone.utc)
-    cutoff = (now - timedelta(days=months_back * 30)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    recent_monthly = {
-        key: value
-        for key, value in monthly.items()
-        if datetime.strptime(f"{key}-01", "%Y-%m-%d").replace(tzinfo=timezone.utc) >= cutoff
-    }
-    if not recent_monthly:
-        recent_monthly = monthly
+    month_cutoff = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    for _ in range(months_back - 1):
+        month_cutoff = (month_cutoff.replace(day=1) - timedelta(days=1)).replace(day=1)
 
-    best_month_key = max(recent_monthly, key=recent_monthly.get)
-    best_month = (format_month(best_month_key), recent_monthly[best_month_key], f"Last {months_back} months")
-
+    monthly: dict[str, int] = defaultdict(int)
     weekly: dict[str, int] = defaultdict(int)
     week_start: dict[str, datetime] = {}
     week_end: dict[str, datetime] = {}
-    for date, count in days:
-        if date < cutoff:
-            continue
-        iso = date.isocalendar()
-        key = f"{iso.year}-W{iso.week:02d}"
-        weekly[key] += count
-        week_start[key] = min(week_start.get(key, date), date)
-        week_end[key] = max(week_end.get(key, date), date)
 
-    if not weekly:
-        for date, count in days:
+    for date, count in days:
+        if date >= month_cutoff:
+            monthly[month_key(date)] += count
             iso = date.isocalendar()
             key = f"{iso.year}-W{iso.week:02d}"
             weekly[key] += count
             week_start[key] = min(week_start.get(key, date), date)
             week_end[key] = max(week_end.get(key, date), date)
-        week_scope = "All time"
-    else:
-        week_scope = f"Last {months_back} months"
+
+    if not monthly:
+        raise RuntimeError("No contribution data found in lookback window")
+
+    best_month_key = max(monthly, key=monthly.get)
+    best_month = (format_month(best_month_key), monthly[best_month_key], f"Last {months_back} months")
 
     best_week_key = max(weekly, key=weekly.get)
     best_week = (
         format_week(week_start[best_week_key], week_end[best_week_key]),
         weekly[best_week_key],
-        week_scope,
+        f"Last {months_back} months",
     )
 
     return best_month, best_week
@@ -210,12 +162,10 @@ def update_readme(section: str) -> None:
 def main() -> None:
     created_at = fetch_user_created_at()
     now = datetime.now(timezone.utc)
-
-    stats = fetch_stats(created_at, now)
-    calendar = stats["contributionCalendar"]
-    days = parse_days(calendar)
+    lookback_start_year = max(created_at.year, now.year - 1)
+    days = fetch_contribution_days(lookback_start_year, now.year)
     best_month, best_week = compute_peaks(days, MONTHS_LOOKBACK)
-    total_commits = int(stats.get("totalCommitContributions", 0))
+    total_commits = fetch_total_commits()
 
     update_readme(build_section(total_commits, best_month, best_week, created_at))
 
