@@ -207,14 +207,6 @@ def build_section(
 ) -> str:
     since_label = since.strftime("%b %d, %Y")
     return f"""{START_MARKER}
-<p align="center">
-  <img src="https://github-readme-stats.shion.dev/api?username={USERNAME}&include_all_commits=true&show_icons=true&theme=tokyonight&hide_border=true&hide=stars,prs,issues,contribs&custom_title=Commit%20Overview" alt="Commit Overview" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user={USERNAME}&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
-</p>
-
 <table align="center">
   <tr>
     <td align="center">
