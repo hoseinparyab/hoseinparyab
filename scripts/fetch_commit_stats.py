@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""Fetch GitHub commit stats and update README section."""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import sys
+import urllib.error
+import urllib.request
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from typing import Any
+
+USERNAME = os.environ.get("GITHUB_USERNAME", "hoseinparyab")
+TOKEN = os.environ.get("GITHUB_TOKEN", "")
+README_PATH = os.environ.get("README_PATH", "README.md")
+START_MARKER = "<!--START_SECTION:commit_stats-->"
+END_MARKER = "<!--END_SECTION:commit_stats-->"
+MONTHS_LOOKBACK = int(os.environ.get("MONTHS_LOOKBACK", "6"))
+
+
+def api_request(url: str, data: dict[str, Any] | None = None, extra_headers: dict[str, str] | None = None) -> Any:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "hoseinparyab-commit-stats",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    if TOKEN:
+        headers["Authorization"] = f"Bearer {TOKEN}"
+    if extra_headers:
+        headers.update(extra_headers)
+
+    body = None
+    if data is not None:
+        body = json.dumps(data).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+
+    request = urllib.request.Request(url, data=body, headers=headers, method="POST" if data else "GET")
+    with urllib.request.urlopen(request, timeout=90) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def fetch_user_created_at() -> datetime:
+    payload = api_request(f"https://api.github.com/users/{USERNAME}")
+    return datetime.fromisoformat(payload["created_at"].replace("Z", "+00:00"))
+
+
+def fetch_contribution_calendar(from_date: datetime, to_date: datetime) -> dict[str, Any]:
+    query = """
+    query($login: String!, $from: DateTime!, $to: DateTime!) {
+      user(login: $login) {
+        contributionsCollection(from: $from, to: $to) {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    variables = {
+        "login": USERNAME,
+        "from": from_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "to": to_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+    result = api_request("https://api.github.com/graphql", {"query": query, "variables": variables})
+    if "errors" in result:
+        raise RuntimeError(json.dumps(result["errors"], indent=2))
+    return result["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+
+
+def fetch_total_commits(created_at: datetime) -> int:
+    """Count commits via Search API (1 request when token is available)."""
+    if not TOKEN:
+        raise RuntimeError("GITHUB_TOKEN is required to count total commits")
+
+    since = created_at.strftime("%Y-%m-%d")
+    query = f"author:{USERNAME} committer-date:>={since}"
+    url = f"https://api.github.com/search/commits?q={urllib.request.quote(query)}&per_page=1"
+    result = api_request(url, extra_headers={"Accept": "application/vnd.github+json"})
+    return int(result.get("total_count", 0))
+
+
+def parse_days(calendar: dict[str, Any]) -> list[tuple[datetime, int]]:
+    days: list[tuple[datetime, int]] = []
+    for week in calendar.get("weeks", []):
+        for day in week.get("contributionDays", []):
+            date = datetime.strptime(day["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            days.append((date, int(day["contributionCount"])))
+    return days
+
+
+def month_key(date: datetime) -> str:
+    return date.strftime("%Y-%m")
+
+
+def format_month(label: str) -> str:
+    year, month = label.split("-")
+    names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return f"{names[int(month) - 1]} {year}"
+
+
+def format_week(start: datetime, end: datetime) -> str:
+    if start.year == end.year:
+        return f"{start.strftime('%b %d')} - {end.strftime('%b %d, %Y')}"
+    return f"{start.strftime('%b %d, %Y')} - {end.strftime('%b %d, %Y')}"
+
+
+def compute_peaks(days: list[tuple[datetime, int]], months_back: int) -> tuple[tuple[str, int, str], tuple[str, int, str]]:
+    monthly: dict[str, int] = defaultdict(int)
+    for date, count in days:
+        monthly[month_key(date)] += count
+
+    now = datetime.now(timezone.utc)
+    cutoff = (now - timedelta(days=months_back * 30)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    recent_monthly = {
+        key: value
+        for key, value in monthly.items()
+        if datetime.strptime(f"{key}-01", "%Y-%m-%d").replace(tzinfo=timezone.utc) >= cutoff
+    }
+    if not recent_monthly:
+        recent_monthly = monthly
+
+    best_month_key = max(recent_monthly, key=recent_monthly.get)
+    best_month = (format_month(best_month_key), recent_monthly[best_month_key], f"Last {months_back} months")
+
+    weekly: dict[str, int] = defaultdict(int)
+    week_start: dict[str, datetime] = {}
+    week_end: dict[str, datetime] = {}
+    for date, count in days:
+        if date < cutoff:
+            continue
+        iso = date.isocalendar()
+        key = f"{iso.year}-W{iso.week:02d}"
+        weekly[key] += count
+        week_start[key] = min(week_start.get(key, date), date)
+        week_end[key] = max(week_end.get(key, date), date)
+
+    if not weekly:
+        for date, count in days:
+            iso = date.isocalendar()
+            key = f"{iso.year}-W{iso.week:02d}"
+            weekly[key] += count
+            week_start[key] = min(week_start.get(key, date), date)
+            week_end[key] = max(week_end.get(key, date), date)
+        week_scope = "All time"
+    else:
+        week_scope = f"Last {months_back} months"
+
+    best_week_key = max(weekly, key=weekly.get)
+    best_week = (
+        format_week(week_start[best_week_key], week_end[best_week_key]),
+        weekly[best_week_key],
+        week_scope,
+    )
+
+    return best_month, best_week
+
+
+def build_section(
+    total_commits: int,
+    best_month: tuple[str, int, str],
+    best_week: tuple[str, int, str],
+    since: datetime,
+) -> str:
+    since_label = since.strftime("%b %d, %Y")
+    return f"""{START_MARKER}
+<p align="center">
+  <img src="https://github-readme-stats.shion.dev/api?username={USERNAME}&include_all_commits=true&show_icons=true&theme=tokyonight&hide_border=true&hide=stars,prs,issues,contribs&custom_title=Commit%20Overview" alt="Commit Overview" />
+</p>
+
+<p align="center">
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user={USERNAME}&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <b>🔢 Total Commits</b><br/>
+      <b>{total_commits:,}</b><br/>
+      <sub>{since_label} - Present</sub>
+    </td>
+    <td align="center">
+      <b>📅 Best Month</b><br/>
+      <b>{best_month[1]:,}</b><br/>
+      <sub>{best_month[0]} · {best_month[2]}</sub>
+    </td>
+    <td align="center">
+      <b>🔥 Best Week</b><br/>
+      <b>{best_week[1]:,}</b><br/>
+      <sub>{best_week[0]} · {best_week[2]}</sub>
+    </td>
+  </tr>
+</table>
+
+<p align="center"><sub>Auto-updated daily by GitHub Actions</sub></p>
+{END_MARKER}"""
+
+
+def update_readme(section: str) -> None:
+    with open(README_PATH, encoding="utf-8") as handle:
+        content = handle.read()
+
+    pattern = re.compile(re.escape(START_MARKER) + r".*?" + re.escape(END_MARKER), re.DOTALL)
+    if not pattern.search(content):
+        raise RuntimeError(f"Markers not found in {README_PATH}")
+
+    with open(README_PATH, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(pattern.sub(section, content, count=1))
+
+
+def main() -> None:
+    created_at = fetch_user_created_at()
+    now = datetime.now(timezone.utc)
+
+    calendar = fetch_contribution_calendar(created_at, now)
+    days = parse_days(calendar)
+    best_month, best_week = compute_peaks(days, MONTHS_LOOKBACK)
+    total_commits = fetch_total_commits(created_at)
+
+    update_readme(build_section(total_commits, best_month, best_week, created_at))
+
+    print(
+        json.dumps(
+            {
+                "total_commits": total_commits,
+                "best_month": {"label": best_month[0], "count": best_month[1]},
+                "best_week": {"label": best_week[0], "count": best_week[1]},
+            },
+            indent=2,
+        )
+    )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:  # noqa: BLE001
+        print(f"Error: {exc}", file=sys.stderr)
+        sys.exit(1)
