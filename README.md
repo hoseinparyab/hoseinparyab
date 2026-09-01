@@ -85,24 +85,24 @@
   <tr>
     <td align="center">
       <b>🔢 Total Commits</b><br/>
-      <b>1,529</b><br/>
+      <b>1,544</b><br/>
       <sub>Dec 14, 2020 - Present · Public + Private</sub>
     </td>
     <td align="center">
       <b>📅 This Month</b><br/>
-      <b>367</b><br/>
-      <sub>Aug 2026 · Updates daily</sub>
+      <b>13</b><br/>
+      <sub>Sep 2026 · Updates daily</sub>
     </td>
     <td align="center">
       <b>🔥 This Week</b><br/>
-      <b>93</b><br/>
-      <sub>Aug 24 - Aug 30, 2026 · Updates daily</sub>
+      <b>14</b><br/>
+      <sub>Aug 31 - Sep 01, 2026 · Updates daily</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <b>🏆 Best Month</b><br/>
-      <b>367</b><br/>
+      <b>369</b><br/>
       <sub>Aug 2026 · Best in last 6 months</sub>
     </td>
     <td align="center">
