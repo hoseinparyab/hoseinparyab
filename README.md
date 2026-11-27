@@ -90,13 +90,13 @@
     </td>
     <td align="center">
       <b>📅 This Month</b><br/>
-      <b>110</b><br/>
+      <b>111</b><br/>
       <sub>Nov 2026 · Updates daily</sub>
     </td>
     <td align="center">
       <b>🔥 This Week</b><br/>
-      <b>14</b><br/>
-      <sub>Nov 23 - Nov 26, 2026 · Updates daily</sub>
+      <b>15</b><br/>
+      <sub>Nov 23 - Nov 27, 2026 · Updates daily</sub>
     </td>
   </tr>
   <tr>
